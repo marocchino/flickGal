@@ -2,9 +2,9 @@
 /*
 
  jQuery flickGal 1.2.2
- 
+
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo)
- 
+
  Dual licensed under the MIT and GPL licenses:
  http://www.opensource.org/licenses/mit-license.php
  http://www.gnu.org/licenses/gpl.html
@@ -29,17 +29,7 @@
 
   userAgent = navigator.userAgent.toLowerCase();
 
-  if (userAgent.indexOf('webkit') >= 0) {
-    currentBrowser = BrowserType.WEBKIT;
-  } else if (userAgent.indexOf('gecko') >= 0) {
-    currentBrowser = BrowserType.GECKO;
-  } else if (userAgent.indexOf('msie') >= 0) {
-    currentBrowser = BrowserType.MSIE;
-  } else if (userAgent.indexOf('opera') >= 0) {
-    currentBrowser = BrowserType.OPERA;
-  } else {
-    currentBrowser = BrowserType.OTHER;
-  }
+  currentBrowser = userAgent.indexOf('webkit') >= 0 ? BrowserType.WEBKIT : userAgent.indexOf('gecko') >= 0 ? BrowserType.GECKO : userAgent.indexOf('msie') >= 0 ? BrowserType.MSIE : userAgent.indexOf('opera') >= 0 ? BrowserType.OPERA : BrowserType.OTHER;
 
   isIOS = userAgent.indexOf('iphone') >= 0 || userAgent.indexOf('ipad') >= 0;
 
@@ -47,22 +37,20 @@
 
   isMobile = isIOS || isAndroid;
 
-  switch (currentBrowser) {
-    case BrowserType.WEBKIT:
-      CSS_PREFIX = '-webkit-';
-      break;
-    case BrowserType.GECKO:
-      CSS_PREFIX = '-moz-';
-      break;
-    case BrowserType.MSIE:
-      CSS_PREFIX = '-ms-';
-      break;
-    case BrowserType.OPERA:
-      CSS_PREFIX = '-o-';
-      break;
-    case BrowserType.OTHER:
-      CSS_PREFIX = '';
-  }
+  CSS_PREFIX = (function() {
+    switch (currentBrowser) {
+      case BrowserType.WEBKIT:
+        return '-webkit-';
+      case BrowserType.GECKO:
+        return '-moz-';
+      case BrowserType.MSIE:
+        return '-ms-';
+      case BrowserType.OPERA:
+        return '-o-';
+      case BrowserType.OTHER:
+        return '';
+    }
+  })();
 
   CSS_TRANSITION = CSS_PREFIX + 'transition';
 
@@ -105,41 +93,41 @@
   */
 
 
-  window['jQuery']['fn']['flickGal'] = function(options) {
+  window.jQuery.fn.flickGal = function(options) {
     /*
         option
     */
-    options = $['extend']({
-      'infinitCarousel': false,
-      'lockScroll': true
+    options = $.extend({
+      infinitCarousel: false,
+      lockScroll: true
     }, options);
     /*
         iterate each element in jQuery object
     */
 
-    return this['each'](function() {
+    return this.each(function() {
       /*
             private variables
       */
 
       var $box, $container, $flickBox, $items, $nav, $navA, $navChildren, $next, $prev, STATE, box, boxHeight, boxWidth, calcNextIndex_, containerBaseX, containerOffsetLeft, currentIndex, disableArrow, endX, getGeckoTranslateX, getTranslateX, itemLength, itemWidth, maxLeft, minLeft, moveTo, nextTappedHandler, prevTappedHandler, redefineLeftOffset, startLeft, startTime, startX, state, touchEvents, touchHandler, transitionEndHandler, useArrows, useNav;
       $flickBox = $(this);
-      $container = $('.container', $flickBox)['css']({
+      $container = $('.container', $flickBox).css({
         overflow: 'hidden'
       });
-      $box = $('.containerInner', $container)['css']({
+      $box = $('.containerInner', $container).css({
         position: 'relative',
         overflow: 'hidden',
         top: 0,
         left: 0
       });
-      $items = $('.item', $box)['css']({
-        'float': 'left'
+      $items = $('.item', $box).css({
+        float: 'left'
       });
-      itemLength = $items['length'];
-      itemWidth = $items['outerWidth'](true);
+      itemLength = $items.length;
+      itemWidth = $items.outerWidth(true);
       boxWidth = itemWidth * itemLength;
-      boxHeight = $items['outerHeight'](true);
+      boxHeight = $items.outerHeight(true);
       minLeft = 0;
       maxLeft = ((itemWidth * itemLength) - itemWidth) * -1;
       currentIndex = 0;
@@ -152,8 +140,8 @@
       getGeckoTranslateX = function($elm) {
         var translateX;
         try {
-          translateX = window['parseInt'](/(,.+?){3} (.+?)px/.exec($elm['css'](CSS_TRANSFORM))[2]);
-          if (!window['isNaN'](translateX)) {
+          translateX = window.parseInt(/(,.+?){3} (.+?)px/.exec($elm.css(CSS_TRANSFORM))[2]);
+          if (!window.isNaN(translateX)) {
             return translateX + containerOffsetLeft;
           } else {
             return 0;
@@ -163,14 +151,14 @@
       };
       getTranslateX = function() {
         if (currentBrowser !== BrowserType.GECKO) {
-          return $box['offset']()['left'];
+          return $box.offset().left;
         } else {
           return getGeckoTranslateX($box);
         }
       };
       redefineLeftOffset = function(e) {
-        containerOffsetLeft = $container['offset']()['left'];
-        containerBaseX = ($container['innerWidth']() - itemWidth) / 2;
+        containerOffsetLeft = $container.offset().left;
+        containerBaseX = ($container.innerWidth() - itemWidth) / 2;
         return moveTo(currentIndex);
       };
       /*
@@ -178,32 +166,32 @@
       */
 
       $nav = $('.nav', $flickBox);
-      $navA = $nav['find']('a[href^=#]');
-      $navChildren = $navA['parent']();
-      useNav = !!($nav['length'] && $navA['length'] && $navChildren['length']);
+      $navA = $nav.find('a[href^=#]');
+      $navChildren = $navA.parent();
+      useNav = !!($nav.length && $navA.length && $navChildren.length);
       /*
             implement next/prev arrows
       */
 
       $prev = $('.prev', $flickBox);
       $next = $('.next', $flickBox);
-      useArrows = !!($prev['length'] && $next['length']);
+      useArrows = !!($prev.length && $next.length);
       if (useArrows) {
         prevTappedHandler = function() {
-          currentIndex = currentIndex > 0 ? currentIndex - 1 : options['infinitCarousel'] ? itemLength - 1 : currentIndex;
+          currentIndex = currentIndex > 0 ? currentIndex - 1 : options.infinitCarousel ? itemLength - 1 : currentIndex;
           return moveTo(currentIndex);
         };
         nextTappedHandler = function() {
-          currentIndex = currentIndex < itemLength - 1 ? currentIndex + 1 : options['infinitCarousel'] ? 0 : currentIndex;
+          currentIndex = currentIndex < itemLength - 1 ? currentIndex + 1 : options.infinitCarousel ? 0 : currentIndex;
           return moveTo(currentIndex);
         };
         disableArrow = function() {
-          $prev.add($next)['removeClass']('off');
+          $prev.add($next).removeClass('off');
           if (currentIndex === 0) {
-            return $prev['addClass']('off');
+            return $prev.addClass('off');
           } else {
             if (currentIndex === itemLength - 1) {
-              return $next['addClass']('off');
+              return $next.addClass('off');
             }
           }
         };
@@ -228,7 +216,7 @@
         touch = isMobile ? e.touches[0] : e;
         switch (e.type) {
           case EventType.MOVE:
-            if (options['lockScroll']) {
+            if (options.lockScroll) {
               e.preventDefault();
             }
             if (state & STATE.IS_MOVING) {
@@ -236,7 +224,7 @@
               if (state & STATE.IS_EDGE && (((state & STATE.IS_FIRST) && diffX > 0) || ((state & STATE.IS_LAST) && diffX < 0))) {
                 diffX = diffX / 2;
               }
-              return $box['css'](CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft + diffX));
+              return $box.css(CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft + diffX));
             }
             break;
           case EventType.START:
@@ -256,9 +244,9 @@
             startTime = (new Date()).getTime();
             startX = isMobile ? touch.pageX : e.clientX;
             startLeft = getTranslateX() - containerOffsetLeft - containerBaseX;
-            $flickBox['trigger'](EventType.FG_FLICKSTART, [currentIndex]);
-            if ($box['hasClass']('moving')) {
-              return $box['removeClass']('moving')['css'](CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft));
+            $flickBox.trigger(EventType.FG_FLICKSTART, [currentIndex]);
+            if ($box.hasClass('moving')) {
+              return $box.removeClass('moving').css(CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft));
             }
             break;
           case EventType.END:
@@ -266,12 +254,12 @@
             state = 0;
             endX = isMobile ? e.changedTouches[0].pageX : e.clientX;
             index = calcNextIndex_();
-            $flickBox['trigger'](EventType.FG_FLICKEND, [index]);
+            $flickBox.trigger(EventType.FG_FLICKEND, [index]);
             return moveTo(index);
         }
       };
       transitionEndHandler = function() {
-        return $box['removeClass']('moving');
+        return $box.removeClass('moving');
       };
       calcNextIndex_ = function() {
         var currX, d, distanceX, endTime, index, timeDiff;
@@ -293,14 +281,14 @@
         return Math.max(0, Math.min(index, itemLength - 1));
       };
       moveTo = function(index) {
-        $box['addClass']('moving');
+        $box.addClass('moving');
         if (currentIndex !== index) {
-          $flickBox['trigger'](EventType.FG_CHANGE, [index]);
+          $flickBox.trigger(EventType.FG_CHANGE, [index]);
         }
         currentIndex = index;
-        $box['css'](CSS_TRANSFORM, getCssTranslateValue(containerBaseX + itemWidth * currentIndex * -1));
+        $box.css(CSS_TRANSFORM, getCssTranslateValue(containerBaseX + itemWidth * currentIndex * -1));
         if (useNav) {
-          $navChildren['removeClass']('selected')['eq'](currentIndex)['addClass']('selected');
+          $navChildren.removeClass('selected').eq(currentIndex).addClass('selected');
         }
         if (useArrows) {
           return disableArrow();
@@ -310,37 +298,37 @@
             initialize base variable and bind events
       */
 
-      $container['height'](boxHeight)['scroll'](function() {
-        return $(this)['scrollLeft'](0);
+      $container.height(boxHeight).scroll(function() {
+        return $(this).scrollLeft(0);
       });
-      $box['height'](boxHeight)['width'](boxWidth)['css'](CSS_TRANSFORM, getCssTranslateValue(getTranslateX()));
-      $(window)['bind']((isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE), redefineLeftOffset);
+      $box.height(boxHeight).width(boxWidth).css(CSS_TRANSFORM, getCssTranslateValue(getTranslateX()));
+      $(window).bind((isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE), redefineLeftOffset);
       redefineLeftOffset();
       if (useNav) {
-        $navChildren['eq'](0)['addClass']('selected');
-        $navA['bind'](EventType.START, function(e) {
+        $navChildren.eq(0).addClass('selected');
+        $navA.bind(EventType.START, function(e) {
           var index;
-          index = $navA['index'](this);
+          index = $navA.index(this);
           moveTo(index);
           return false;
-        })['bind'](EventType.CLICK, function() {
+        }).bind(EventType.CLICK, function() {
           return false;
         });
       }
       if (useArrows) {
-        $prev['bind'](EventType.START, prevTappedHandler);
-        $next['bind'](EventType.START, nextTappedHandler);
+        $prev.bind(EventType.START, prevTappedHandler);
+        $next.bind(EventType.START, nextTappedHandler);
         disableArrow();
       }
       touchEvents = [EventType.MOVE, EventType.START, EventType.END];
       if (isMobile) {
         box = $box[0];
-        $['each'](touchEvents, function(i, e) {
+        $.each(touchEvents, function(i, e) {
           return box.addEventListener(e, touchHandler, false);
         });
         return box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
       } else {
-        return $box['bind'](touchEvents.join(' '), touchHandler)['bind'](EventType.TRANSITION_END, transitionEndHandler);
+        return $box.bind(touchEvents.join(' '), touchHandler).bind(EventType.TRANSITION_END, transitionEndHandler);
       }
     });
   };
