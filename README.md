@@ -29,7 +29,7 @@ Tested on iOS Safari and Android 4.0. PC browsers? Yeah. IE? Na.
 Only 3 steps!
 ### 1. Build HTML like below.
 ```html
-<div class="yourElement"><!-- Main container -->
+<div class="flickGal"><!-- Main container -->
 
   <div class="container"><!-- Flickable element (required) -->
     <div class="containerInner"><!-- (required) -->
@@ -57,8 +57,8 @@ Only 3 steps!
 
 ### 2. Write CSS.
 ```css
-.yourElement .item { width: 200px } /* This is required if you have <img> element in .item element. */
-.yourElement .moving {
+.flickGal .item { width: 200px } /* This is required if you have <img> element in .item element. */
+.flickGal .moving {
   /* You can change transition-duration of course. */
   transition: transform .2s ease-out;
   -webkit-transition: -webkit-transform .2s ease-out;
@@ -67,12 +67,26 @@ Only 3 steps!
 ```
 
 ### 3. Include javascripts and run.
+
+#### jquery only
 ```html
-<script src="./javascripts/jquery-1.4.3.min.js"></script>
-<script src="./javascripts/jquery.flickgal.js"></script>
+<script src="./javascripts/jquery-1.7.2.min.js"></script>
+<script src="./javascripts/jquery.flickgal.min.js"></script>
 <script>
 $(function(){
-  $(".yourElement").flickGal();
+  $(".flickGal").flickGal();
+});
+</script>
+```
+
+#### jquery mobile
+```html
+<script src="./javascripts/jquery-1.7.2.min.js"></script>
+<script src="./javascripts/jquery-mobile-1.2.0.min.js"></script>
+<script src="./javascripts/jquery.flickgal.min.js"></script>
+<script>
+$("div[data-role=page]").live('pageinit',function(){
+  $(".flickGal").flickGal();
 });
 </script>
 ```
@@ -80,7 +94,7 @@ $(function(){
 ## Available options
 ```javascript
 $(function(){
-  $(".yourElement").flickGal({
+  $(".flickGal").flickGal({
     infinitCarousel : false,
     lockScroll      : true
   });
@@ -96,7 +110,7 @@ $(function(){
 FlickGal provides 3 custom events.
 ```javascript
 $(function(){
-  $(".yourElement").flickGal()
+  $(".flickGal").flickGal()
     .on('fg_flickstart', function (e, index) {
       // Emitted when a user start flicking.
 
