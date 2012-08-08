@@ -4,5 +4,6 @@
     "muffin": "*",
     "q": "*",
     "underscore": "*"
+    "uglify-js": "*"
   }
 }
