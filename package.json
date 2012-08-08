@@ -1,0 +1,8 @@
+{
+  "name": "flickGal",
+  "dependencies": {
+    "muffin": "*",
+    "q": "*",
+    "underscore": "*"
+  }
+}
