@@ -15,7 +15,7 @@ task 'build', 'Build coffeescripts.', (options) ->
   #   watch: true
   # , options
   muffin.run
-    files: './**/*'
+    files: './src/jquery.flickgal.coffee'
     options: options
     map:
       '.*?\/(jquery.flickgal).coffee': (matches) ->
@@ -26,7 +26,7 @@ task 'build', 'Build coffeescripts.', (options) ->
 # Minify script for production use.
 task 'minify', 'Minify script.', (options) ->
   muffin.run
-    files: './**/*'
+    files: './jquery.flickgal.js'
     options: options
     map: '(jquery.flickgal).js': (matches) ->
       q = muffin.readFile matches[0]
